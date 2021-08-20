@@ -1,0 +1,22 @@
+﻿<Window x:Class="Vizpower_Plugin_Installer_WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d" FontFamily="Segoe UI, Microsoft YaHei UI" FontSize="14"
+        Title="无限宝第三方插件安装程序" Height="245" Width="450" ResizeMode="CanMinimize">
+    <Grid>
+        <Label x:Name="SloganLabel" Content="为了阻挡无限宝的打击，本程序诞生了！" VerticalAlignment="Top" Margin="10,5,10.2,0" Height="30" Foreground="Red"/>
+        <TextBox x:Name="LocationTextBox" HorizontalAlignment="Left" Height="33" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="339" Margin="10,108,0,0" VerticalContentAlignment="Center" IsReadOnly="True"/>
+        <Label x:Name="CloseSecurityTipLabel" Content="本程序释放的文件可能会引起部分杀毒软件的误报，如果出现误报，&#xD;&#xA;请关闭杀毒软件" VerticalAlignment="Top" Margin="10,31,10.2,0" Height="46" Foreground="Red"/>
+        <Label x:Name="LocationTipLabel" Content="无限宝 LoginTool.exe 位置：" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,77,0,0"/>
+        <Button x:Name="NavigateButton" Content="浏览" Click="NavigateButton_Click" Margin="356,108,10,0" Height="33" VerticalAlignment="Top"/>
+        <Label x:Name="TipLabel" Cursor="Hand" MouseDown="TipLabel_MouseDown" Content="使用说明 (旧版)" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8,142,0,0" Foreground="Blue"/>
+        <Label x:Name="AgreementLabel" Cursor="Hand" MouseDown="AgreementLabel_MouseDown"  Content="用户协议和免责声明" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="293,142,0,0" Foreground="Blue"/>
+        <CheckBox x:Name="AgreementCheckBox" Content="已阅读并同意" Checked="AgreementCheckBox_Checked" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="193,142,0,0" Height="29" Width="107" VerticalContentAlignment="Center"/>
+        <Label x:Name="VideoLabel" Cursor="Hand" MouseDown="VideoLabel_MouseDown" Content="视频教程" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="118,142,0,0" Foreground="Blue"/>
+        <Button x:Name="UninstallButton" Content="卸载" Click="UninstallButton_Click" Margin="0,170,8,0" Height="33" VerticalAlignment="Top" HorizontalAlignment="Right" Width="207"/>
+        <Button x:Name="InstallButton" Content="安装" MouseMove="InstallButton_MouseMove" Click="InstallButton_Click" Margin="8,170,0,0" Height="33" VerticalAlignment="Top" HorizontalAlignment="Left" Width="207"/>
+    </Grid>
+</Window>

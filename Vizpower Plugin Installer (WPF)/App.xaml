@@ -1,0 +1,10 @@
+﻿<Application x:Class="Vizpower_Plugin_Installer_WPF.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
+             xmlns:local="clr-namespace:Vizpower_Plugin_Installer_WPF"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        
+    </Application.Resources>
+</Application>
