@@ -13,4 +13,6 @@ Github: [https://github.com/SpaceTimee/Vizpower-Plugin-Installer/releases](https
 💛: 909457621</br>
 💙: 705468445
 
-•ᴗ•
+## 开发者:
+
+**WXRIW, Space Time**

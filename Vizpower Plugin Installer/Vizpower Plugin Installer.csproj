@@ -143,6 +143,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\OriginalCaptureDesktop.dll" />
     <Content Include="Resources\WxbPluginGUI.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

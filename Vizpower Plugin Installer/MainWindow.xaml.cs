@@ -26,7 +26,8 @@ namespace Vizpower_Plugin_Installer_WPF
         //更改版本号到Assembly Information改，特殊版本更改字符串SpecialVersion，如测试版可改为“Alpha”,“Beta”
         //请使用三位版本号，每位使用一位数
         //如有需要，可修改下方字段
-        //dll和exe在Resources文件夹，替换掉原来的再编译即可
+        //CaptureDesktop.dll和WxbPluginGUI.exe在Resources文件夹，替换掉原来的再编译即可
+        //OriginalCaptureDesktop.dll是原版无限宝CaptureDesktop.dll，用于在拆卸时还原，如文件有更新，可将文件名改为OriginalCaptureDesktop.dll并替换
 
         private const string SpecialVersion = "Beta";    //特殊版本后缀
         private const bool SkipUpdate = false;  //是否跳过开启时的检查更新
@@ -47,8 +48,11 @@ namespace Vizpower_Plugin_Installer_WPF
         {
             InitializeComponent();
 
+            //联网检查更新
+            Task.Run(CheckUpdateOnline);
+
             //修改全局标题
-            Title = "无限宝第三方插件 Ver " + CurrentVersion.Major + "." + CurrentVersion.Minor + "." + CurrentVersion.Build + " " + SpecialVersion + " 安装程序";
+            Title = "无限宝第三方插件 Ver " + CurrentVersion.Major + "." + CurrentVersion.Minor + "." + CurrentVersion.Build + " " + SpecialVersion + " 安装器";
 
             LocationTextBox.Text = Properties.Settings.Default.FilePath;
             FileName = Properties.Settings.Default.FileName;
@@ -63,9 +67,6 @@ namespace Vizpower_Plugin_Installer_WPF
             //如果有跳过更新标记 或 是XP则不联网检测更新
             if (SkipUpdate || Strings.Left(Environment.OSVersion.ToString(), 22) == "Microsoft Windows NT 5")
                 return;
-
-            //联网检测更新
-            Task.Run(CheckUpdateOnline);
         }
         private void CheckUpdateOnline()
         {
@@ -77,9 +78,9 @@ namespace Vizpower_Plugin_Installer_WPF
                 int LatestVersionCode;
 
                 WebList = Strings.Split(WebText, "<版本>");
-                if (WebList.ToList().Count < 2)
+                if (WebList.ToList().Count < 3)
                 {
-                    MessageBox.Show("连接服务器失败", Title);
+                    MessageBox.Show("连接服务器失败，请检查网络连接", Title);
                     return;
                 }
                 LatestVersion = WebList[1];
@@ -255,10 +256,32 @@ namespace Vizpower_Plugin_Installer_WPF
                 return;
             }
 
+            if (MessageBox.Show("安装前需关闭无限宝相关进程，如有残留进程，安装器会关闭它，是否继续？", Title, MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
+                return;
+
+            foreach (Process process in Process.GetProcesses())
+            {
+                if (process.ProcessName == "iMeeting" || process.ProcessName == "LoginTool" || process.ProcessName == "WxbPluginGUI")
+                {
+                    try
+                    {
+                        process.Kill();
+                        process.WaitForExit();
+                    }
+                    catch
+                    {
+                        MessageBox.Show("关闭无限宝进程时出现错误，请尝试手动关闭无限宝");
+                        return;
+                    }
+                }
+            }
+
             if (File.Exists(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll")))
                 File.Delete(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll"));
             if (File.Exists(LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe")))
                 File.Delete(LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe"));
+            if (File.Exists(LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll")))
+                File.Delete(LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll"));
 
             try
             {
@@ -295,11 +318,22 @@ namespace Vizpower_Plugin_Installer_WPF
             if (File.Exists(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll")))
             {
                 File.Delete(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll"));
+
+                byte[] data = Properties.Resources.OriginalCaptureDesktop;
+                Stream stream = File.Create(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll"));
+                stream.Write(data, 0, data.Length);
+                stream.Close();
+
                 isclear = false;
             }
             if (File.Exists(LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe")))
             {
                 File.Delete(LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe"));
+                isclear = false;
+            }
+            if (File.Exists(LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll")))
+            {
+                File.Delete(LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll"));
                 isclear = false;
             }
 
@@ -311,12 +345,33 @@ namespace Vizpower_Plugin_Installer_WPF
             InstallButton.Content = "安装";
         }
 
+        //关于
+        private void AboutButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show
+            (
+@"欢迎使用无限宝第三方插件安装器
+
+安装器开发者: WXRIW，Space Time
+
+插件开发者: 秋小十，快乐小牛
+
+反馈请加QQ群: 904645614
+
+使用前须知:
+1. 本程序免费开源，任何人不得将本程序用于商业和违法用途
+2. 安装前请认真阅读并同意用户协议和免责声明
+3. 插件致力于帮助学生更好地记录笔记，请认真听课",
+                Title, MessageBoxButtons.OK
+            );
+        }
+
         //同意协议相关处理
         private void InstallButton_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (AgreementCheckBox.IsChecked == false)
             {
-                int P = 3;// * ScreenDPI / 96;
+                const int P = 3;
                 double CenterX = InstallButton.Width / 2, CenterY = InstallButton.Height / 2;
 
                 if (e.GetPosition(InstallButton).X >= CenterX)
@@ -327,24 +382,6 @@ namespace Vizpower_Plugin_Installer_WPF
                     InstallButton.Margin = new Thickness(InstallButton.Margin.Left, InstallButton.Margin.Top + e.GetPosition(InstallButton).Y - InstallButton.Height - P, InstallButton.Margin.Right, InstallButton.Margin.Bottom);
                 else
                     InstallButton.Margin = new Thickness(InstallButton.Margin.Left, InstallButton.Margin.Top + e.GetPosition(InstallButton).Y + P, InstallButton.Margin.Right, InstallButton.Margin.Bottom);
-
-                //if (e.GetPosition(InstallButton).X >= OriginBtnWidth)
-                //    InstallButton.Width = e.GetPosition(InstallButton).X-2;//2 * InstallButton.Width - ;//new Thickness(InstallButton.Margin.Left + e.GetPosition(InstallButton).X - InstallButton.Width - P, InstallButton.Margin.Top, InstallButton.Margin.Right, InstallButton.Margin.Bottom);
-                //else
-                //{
-                //    if(InstallButton.Width > OriginBtnWidth / 2)
-                //    {
-                //        InstallButton.Margin = new Thickness(OriginBtnInstallMargin.Left + e.GetPosition(this).X - 10 + P, InstallButton.Margin.Top, InstallButton.Margin.Right, InstallButton.Margin.Bottom);
-                //        InstallButton.Width = OriginBtnWidth - e.GetPosition(this).X + 10;
-                //        Title = (OriginInstallButton.Width / 2).ToString();// e.GetPosition(this).X.ToString();
-                //    }
-                //    else
-                //    {
-                //        if(InstallButton.Margin.Left + InstallButton.Width / 2 >= )
-                //        InstallButton.Margin = new Thickness(OriginBtnInstallMargin.Left + e.GetPosition(this).X - 10 + P, InstallButton.Margin.Top, InstallButton.Margin.Right, InstallButton.Margin.Bottom);
-                //    //InstallButton.Width = OriginInstallButton.Width - e.GetPosition(this).X - 10 + CenterX;
-                //    }
-                //}
             }
         }
         private void AgreementCheckBox_Checked(object sender, RoutedEventArgs e)

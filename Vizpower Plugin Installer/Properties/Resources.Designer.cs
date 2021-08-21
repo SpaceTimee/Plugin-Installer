@@ -73,6 +73,16 @@ namespace Vizpower_Plugin_Installer_WPF.Properties {
         /// <summary>
         ///   查找 System.Byte[] 类型的本地化资源。
         /// </summary>
+        internal static byte[] OriginalCaptureDesktop {
+            get {
+                object obj = ResourceManager.GetObject("OriginalCaptureDesktop", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Byte[] 类型的本地化资源。
+        /// </summary>
         internal static byte[] WxbPluginGUI {
             get {
                 object obj = ResourceManager.GetObject("WxbPluginGUI", resourceCulture);
