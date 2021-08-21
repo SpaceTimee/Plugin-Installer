@@ -26,7 +26,8 @@ namespace Vizpower_Plugin_Installer_WPF
         //更改版本号到Assembly Information改，特殊版本更改字符串SpecialVersion，如测试版可改为“Alpha”,“Beta”
         //请使用三位版本号，每位使用一位数
         //如有需要，可修改下方字段
-        //dll和exe在Resources文件夹，替换掉原来的再编译即可
+        //CaptureDesktop.dll和WxbPluginGUI.exe在Resources文件夹，替换掉原来的再编译即可
+        //OriginalCaptureDesktop.dll是原版无限宝CaptureDesktop.dll，用于在拆卸时还原，如文件有更新，可将文件名改为OriginalCaptureDesktop.dll并替换
 
         private const string SpecialVersion = "Beta";    //特殊版本后缀
         private const bool SkipUpdate = false;  //是否跳过开启时的检查更新
@@ -255,10 +256,32 @@ namespace Vizpower_Plugin_Installer_WPF
                 return;
             }
 
+            if (MessageBox.Show("安装前需关闭无限宝相关进程，如有残留进程，安装器会关闭它，是否继续？", Title, MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
+                return;
+
+            foreach (Process process in Process.GetProcesses())
+            {
+                if (process.ProcessName == "iMeeting" || process.ProcessName == "LoginTool" || process.ProcessName == "WxbPluginGUI")
+                {
+                    try
+                    {
+                        process.Kill();
+                        process.WaitForExit();
+                    }
+                    catch
+                    {
+                        MessageBox.Show("关闭无限宝进程时出现错误，请尝试手动关闭无限宝");
+                        return;
+                    }
+                }
+            }
+
             if (File.Exists(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll")))
                 File.Delete(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll"));
             if (File.Exists(LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe")))
                 File.Delete(LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe"));
+            if (File.Exists(LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll")))
+                File.Delete(LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll"));
 
             try
             {
@@ -295,11 +318,22 @@ namespace Vizpower_Plugin_Installer_WPF
             if (File.Exists(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll")))
             {
                 File.Delete(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll"));
+
+                byte[] data = Properties.Resources.OriginalCaptureDesktop;
+                Stream stream = File.Create(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll"));
+                stream.Write(data, 0, data.Length);
+                stream.Close();
+
                 isclear = false;
             }
             if (File.Exists(LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe")))
             {
                 File.Delete(LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe"));
+                isclear = false;
+            }
+            if (File.Exists(LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll")))
+            {
+                File.Delete(LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll"));
                 isclear = false;
             }
 
