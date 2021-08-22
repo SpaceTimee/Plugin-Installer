@@ -6,18 +6,34 @@
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d" FontFamily="Segoe UI, Microsoft YaHei UI" FontSize="14"
         Title="无限宝第三方插件安装器" Height="245" Width="450" ResizeMode="CanMinimize">
-    <Grid>
-        <Label x:Name="SloganLabel" Content="为了阻挡无限宝的打击，本程序诞生了！" VerticalAlignment="Top" Margin="10,5,10.2,0" Height="30" Foreground="Red"/>
-        <TextBox x:Name="LocationTextBox" HorizontalAlignment="Left" Height="33" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="339" Margin="10,108,0,0" VerticalContentAlignment="Center" IsReadOnly="True"/>
-        <Label x:Name="CloseSecurityTipLabel" Content="本程序释放的文件可能会引起部分杀毒软件的误报，如果出现误报，&#xD;&#xA;请关闭杀毒软件" VerticalAlignment="Top" Margin="10,31,10.2,0" Height="46" Foreground="Red"/>
-        <Label x:Name="LocationTipLabel" Content="LoginTool.exe 位置 (位于无限宝安装目录)：" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,77,0,0"/>
-        <Button x:Name="NavigateButton" Content="浏览" Click="NavigateButton_Click" Margin="356,108,10,0" Height="33" VerticalAlignment="Top"/>
-        <Label x:Name="TipLabel" Cursor="Hand" MouseDown="TipLabel_MouseDown" Content="使用说明 (旧版)" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8,142,0,0" Foreground="Blue"/>
-        <Label x:Name="AgreementLabel" Cursor="Hand" MouseDown="AgreementLabel_MouseDown"  Content="用户协议和免责声明" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="293,142,0,0" Foreground="Blue"/>
-        <CheckBox x:Name="AgreementCheckBox" Content="已阅读并同意" Checked="AgreementCheckBox_Checked" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="193,142,0,0" Height="29" Width="107" VerticalContentAlignment="Center"/>
-        <Label x:Name="VideoLabel" Cursor="Hand" MouseDown="VideoLabel_MouseDown" Content="视频教程" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="118,142,0,0" Foreground="Blue"/>
-        <Button x:Name="UninstallButton" Content="卸载" Click="UninstallButton_Click" Margin="0,170,8,0" Height="33" VerticalAlignment="Top" HorizontalAlignment="Right" Width="207"/>
-        <Button x:Name="InstallButton" Content="安装" MouseMove="InstallButton_MouseMove" Click="InstallButton_Click" Margin="8,170,0,0" Height="33" VerticalAlignment="Top" HorizontalAlignment="Left" Width="207" IsDefault="True"/>
-        <Button x:Name="AboutButton" Content="关于" Click="AboutButton_Click" Margin="356,64,10,0" Height="33" VerticalAlignment="Top"/>
+    <Grid x:Name="grid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="46"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="33"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label x:Name="SloganLabel" Content="为了阻挡无限宝的打击，本程序诞生了！" Margin="10,0" Height="30" Foreground="Red" Grid.ColumnSpan="4"/>
+        <Label x:Name="CloseSecurityTipLabel" Content="本程序释放的文件可能会引起部分杀毒软件的误报，如果出现误报，&#xD;&#xA;请关闭杀毒软件" Margin="10,0" Height="46" Foreground="Red" Grid.ColumnSpan="4" Grid.Row="1"/>
+        <Label x:Name="LocationTipLabel" Content="LoginTool.exe 位置 (位于无限宝安装目录)：" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.ColumnSpan="3" Grid.Row="2"/>
+        <TextBox x:Name="LocationTextBox" Height="33" TextWrapping="Wrap" Text="" Margin="10,0,5,0" VerticalContentAlignment="Center" IsReadOnly="True" Grid.ColumnSpan="3" Grid.Row="3" Padding="5,0,0,0"/>
+        <Button x:Name="NavigateButton" Content="浏览" Click="NavigateButton_Click" Background="#FFEEEEEE" Grid.Column="3" Margin="5,0,10,0" Grid.Row="3" Height="33"/>
+        <Label x:Name="TipLabel" Cursor="Hand" MouseDown="TipLabel_MouseDown" Content="使用说明 (旧版)" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="Blue" Grid.ColumnSpan="2" Grid.Row="4"/>
+        <Label x:Name="AgreementLabel" Cursor="Hand" MouseDown="AgreementLabel_MouseDown"  Content="用户协议和免责声明" HorizontalAlignment="Right" Foreground="Blue" Grid.Column="2" Grid.ColumnSpan="2" Margin="0,0,10,0" Grid.Row="4"/>
+        <CheckBox x:Name="AgreementCheckBox" Content="已阅读并同意" HorizontalAlignment="Right" Margin="0,0,140,0" Height="29" Width="107" VerticalContentAlignment="Center" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="4"/>
+        <Label x:Name="VideoLabel" Cursor="Hand" MouseDown="VideoLabel_MouseDown" Content="视频教程" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="Blue" Grid.Column="1" Grid.Row="4"/>
+        <Button x:Name="UninstallButton" Content="卸载" Click="UninstallButton_Click" Margin="5,0,10,10" Background="#FFEEEEEE" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="5"/>
+        <Grid Grid.Row="5" Grid.ColumnSpan="2" MouseEnter="InstallButton_MouseEnter" MouseLeave="InstallButton_MouseLeave">
+            <Button x:Name="InstallButton" Content="安装" Click="InstallButton_Click" Margin="10,0,5,10" IsDefault="True" Background="#FFEEEEEE" Grid.ColumnSpan="2" Grid.Row="5"/>
+        </Grid>
+        <Button x:Name="AboutButton" Content="关于" Click="AboutButton_Click" Height="33" VerticalAlignment="Bottom" Background="#FFEEEEEE" Grid.Column="3" Margin="5,0,10,10" Grid.Row="1" Grid.RowSpan="2"/>
     </Grid>
 </Window>

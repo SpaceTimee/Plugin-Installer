@@ -38,8 +38,8 @@ namespace Vizpower_Plugin_Installer_WPF
         //注意:打包无需修改下方内容
 
         private string FileName = "";   //LoginTool.exe的名字
-        private Thickness OriginInstallButtonMargin = new Thickness();  //原始安装按钮的Margin
-        private readonly System.Windows.Controls.Button OriginInstallButton = new System.Windows.Controls.Button();  //原始安装按钮
+        private string OriginInstallButtonContent = "安装";  //原始安装按钮的Content
+        private int WrongNum = 0;   //呵呵次数
 
         private static readonly Version CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version; //当前版本
         private static int CurrentVersionCode = 0;  //当前版本号
@@ -59,10 +59,6 @@ namespace Vizpower_Plugin_Installer_WPF
 
             //记录当前版本号
             CurrentVersionCode = int.Parse(CurrentVersion.Major.ToString() + CurrentVersion.Minor.ToString() + CurrentVersion.Build.ToString());
-
-            //记录原始Button位置
-            OriginInstallButtonMargin = InstallButton.Margin;
-            OriginInstallButton = InstallButton;
 
             //如果有跳过更新标记 或 是XP则不联网检测更新
             if (SkipUpdate || Strings.Left(Environment.OSVersion.ToString(), 22) == "Microsoft Windows NT 5")
@@ -247,7 +243,26 @@ namespace Vizpower_Plugin_Installer_WPF
         {
             if (AgreementCheckBox.IsChecked == false)
             {
-                MessageBox.Show("请勾选已阅读并同意用户协议和免责声明", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (WrongNum == 1)
+                    MessageBox.Show("???", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else if (WrongNum < 3)
+                    MessageBox.Show("你呵呵什么?", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else if (WrongNum < 5)
+                    MessageBox.Show("去想想有没有漏掉什么?", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else if (WrongNum < 10)
+                    MessageBox.Show("呵呵", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else if (WrongNum == 10)
+                    MessageBox.Show("我佛了，同意个用户协议有这么难么", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else if (WrongNum == 100)
+                    MessageBox.Show("是的，你已经呵呵了100次了", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else if (WrongNum == 1000)
+                    MessageBox.Show("大佬，你的坚持和毅力已经击败了99.99%的人", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else if (WrongNum == 1001)
+                    MessageBox.Show("但用户协议是不能跳过的", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else
+                    MessageBox.Show("同意一下用户协议吧QAQ", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                ++WrongNum;
                 return;
             }
             if (LocationTextBox.Text == "" || FileName == "")
@@ -352,9 +367,10 @@ namespace Vizpower_Plugin_Installer_WPF
             (
 @"欢迎使用无限宝第三方插件安装器
 
-安装器开发者: WXRIW，Space Time
+安装器开发者: WXRIW，Space Time 
+插件开发者: 秋小十，快乐小牛，极地萤火
 
-插件开发者: 秋小十，快乐小牛
+(开发者名单如有缺失请找Space Time加上)
 
 反馈请加QQ群: 904645614
 
@@ -367,28 +383,18 @@ namespace Vizpower_Plugin_Installer_WPF
         }
 
         //同意协议相关处理
-        private void InstallButton_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void InstallButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (AgreementCheckBox.IsChecked == false)
             {
-                const int P = 3;
-                double CenterX = InstallButton.Width / 2, CenterY = InstallButton.Height / 2;
-
-                if (e.GetPosition(InstallButton).X >= CenterX)
-                    InstallButton.Margin = new Thickness(InstallButton.Margin.Left + e.GetPosition(InstallButton).X - InstallButton.Width - P, InstallButton.Margin.Top, InstallButton.Margin.Right, InstallButton.Margin.Bottom);
-                else
-                    InstallButton.Margin = new Thickness(InstallButton.Margin.Left + e.GetPosition(InstallButton).X + P, InstallButton.Margin.Top, InstallButton.Margin.Right, InstallButton.Margin.Bottom);
-                if (e.GetPosition(InstallButton).Y >= CenterY)
-                    InstallButton.Margin = new Thickness(InstallButton.Margin.Left, InstallButton.Margin.Top + e.GetPosition(InstallButton).Y - InstallButton.Height - P, InstallButton.Margin.Right, InstallButton.Margin.Bottom);
-                else
-                    InstallButton.Margin = new Thickness(InstallButton.Margin.Left, InstallButton.Margin.Top + e.GetPosition(InstallButton).Y + P, InstallButton.Margin.Right, InstallButton.Margin.Bottom);
+                OriginInstallButtonContent = InstallButton.Content as string;
+                InstallButton.Content = "呵呵";
             }
         }
-        private void AgreementCheckBox_Checked(object sender, RoutedEventArgs e)
+        private void InstallButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            InstallButton.Margin = OriginInstallButtonMargin;
-            InstallButton.Width = OriginInstallButton.Width;
-            InstallButton.Height = OriginInstallButton.Height;
+            if (AgreementCheckBox.IsChecked == false)
+                InstallButton.Content = OriginInstallButtonContent;
         }
 
         //链接相关处理
