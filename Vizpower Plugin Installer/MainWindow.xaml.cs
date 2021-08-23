@@ -36,55 +36,62 @@ namespace Vizpower_Plugin_Installer_WPF
         private const string InstallVideoUrl = @"https://www.bilibili.com/video/BV1Ca4y1E7mx";  //使用教程Url
 
         //注意:打包无需修改下方内容
-
-        private string FileName = "";   //LoginTool.exe的名字
-        private string OriginInstallButtonContent = "安装";  //原始安装按钮的Content
-        private int WrongNum = 0;   //呵呵次数
-
         private static readonly Version CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version; //当前版本
-        private static int CurrentVersionCode = 0;  //当前版本号
+        private static readonly int CurrentVersionCode = int.Parse(CurrentVersion.Major.ToString() + CurrentVersion.Minor.ToString() + CurrentVersion.Build.ToString());  //当前版本号
+
+        private static string FileName = "";   //LoginTool.exe的名字
+        private static string CaptureDesktopPath = "";
+        private static string WxbPluginGUIExePath = "";
+        private static string WxbPluginGUIDllPath = "";
+        private static string OriginInstallButtonContent = "安装";  //原始安装按钮的Content
+        private static int WrongNum = 0;   //呵呵次数
 
         public MainWindow()
         {
             InitializeComponent();
 
             //联网检查更新
-            Task.Run(CheckUpdateOnline);
+            if (!SkipUpdate && Strings.Left(Environment.OSVersion.ToString(), 22) != "Microsoft Windows NT 5")
+                Task.Run(CheckUpdateOnline);
 
             //修改全局标题
             Title = "无限宝第三方插件 Ver " + CurrentVersion.Major + "." + CurrentVersion.Minor + "." + CurrentVersion.Build + " " + SpecialVersion + " 安装器";
 
+            //恢复安装路径
             LocationTextBox.Text = Properties.Settings.Default.FilePath;
             FileName = Properties.Settings.Default.FileName;
 
-            //记录当前版本号
-            CurrentVersionCode = int.Parse(CurrentVersion.Major.ToString() + CurrentVersion.Minor.ToString() + CurrentVersion.Build.ToString());
+            //处理恢复记录
+            if (LocationTextBox.Text != "" && FileName != "")
+            {
+                CaptureDesktopPath = LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll");
+                WxbPluginGUIExePath = LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe");
+                WxbPluginGUIDllPath = LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll");
 
-            //如果有跳过更新标记 或 是XP则不联网检测更新
-            if (SkipUpdate || Strings.Left(Environment.OSVersion.ToString(), 22) == "Microsoft Windows NT 5")
-                return;
+                if (File.Exists(CaptureDesktopPath) &&
+                    File.Exists(WxbPluginGUIExePath))
+                    InstallButton.Content = "更新";
+            }
         }
         private void CheckUpdateOnline()
         {
             try
             {
-                string WebText = GetWebCode("https://gitee.com/klxn/wxbplugin/raw/master/service.txt");
-                string[] WebList;
-                string ForceUpdate, LatestVersion, DownLoadURL;
-                int LatestVersionCode;
+                string WebText = GetWebCode("https://gitee.com/klxn/wxbplugin/raw/master/service.txt"); //API返回结果
 
-                WebList = Strings.Split(WebText, "<版本>");
-                if (WebList.ToList().Count < 3)
+                if (Strings.Split(WebText, "<版本>").ToList().Count < 3)
                 {
-                    MessageBox.Show("连接服务器失败，请检查网络连接", Title);
+                    MessageBox.Show("检查更新失败，请检查网络连接", Title);
                     return;
                 }
-                LatestVersion = WebList[1];
 
+                string LatestVersion = Strings.Split(WebText, "<版本>")[1];
+
+                int LatestVersionCode = 0;
                 try
                 {
                     string Num = "";
-                    for (int i = 1; i <= LatestVersion.Length; i++)
+                    for (int i = 1; i <= LatestVersion.Length; ++i)
                         Num += (Strings.AscW(Strings.Mid(LatestVersion, i, 1)) >= 48 && Strings.AscW(Strings.Mid(LatestVersion, i, 1)) <= 57) ? Strings.Mid(LatestVersion, i, 1) : "";
 
                     LatestVersionCode = int.Parse(Num);
@@ -96,10 +103,8 @@ namespace Vizpower_Plugin_Installer_WPF
                 }
                 if (LatestVersionCode > CurrentVersionCode)
                 {
-                    WebList = Strings.Split(WebText, "<强制更新>");
-                    ForceUpdate = WebList[1];
-                    WebList = Strings.Split(WebText, "<链接>");
-                    DownLoadURL = WebList[1];
+                    string ForceUpdate = Strings.Split(WebText, "<强制更新>")[1];
+                    string DownLoadURL = Strings.Split(WebText, "<链接>")[1];
 
                     if (ForceUpdate == "0")
                     {
@@ -230,12 +235,16 @@ namespace Vizpower_Plugin_Installer_WPF
                 LocationTextBox.Text = openFileDialog.FileName; //路径
                 FileName = System.IO.Path.GetFileName(LocationTextBox.Text);    //文件名(包括后缀名)
 
+                CaptureDesktopPath = LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll");
+                WxbPluginGUIExePath = LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe");
+                WxbPluginGUIDllPath = LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll");
+
                 Properties.Settings.Default.FileName = FileName;
                 Properties.Settings.Default.FilePath = LocationTextBox.Text;
                 Properties.Settings.Default.Save();
 
-                if (File.Exists(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll")) &&
-                    File.Exists(LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe")))
+                if (File.Exists(CaptureDesktopPath) &&
+                    File.Exists(WxbPluginGUIExePath))
                     InstallButton.Content = "更新";
             }
         }
@@ -271,42 +280,26 @@ namespace Vizpower_Plugin_Installer_WPF
                 return;
             }
 
-            if (MessageBox.Show("安装前需关闭无限宝相关进程，如有残留进程，安装器会关闭它，是否继续？", Title, MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
+            //杀死进程
+            if (!KillWxbProcess())
                 return;
 
-            foreach (Process process in Process.GetProcesses())
-            {
-                if (process.ProcessName == "iMeeting" || process.ProcessName == "LoginTool" || process.ProcessName == "WxbPluginGUI")
-                {
-                    try
-                    {
-                        process.Kill();
-                        process.WaitForExit();
-                    }
-                    catch
-                    {
-                        MessageBox.Show("关闭无限宝进程时出现错误，请尝试手动关闭无限宝");
-                        return;
-                    }
-                }
-            }
-
-            if (File.Exists(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll")))
-                File.Delete(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll"));
-            if (File.Exists(LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe")))
-                File.Delete(LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe"));
-            if (File.Exists(LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll")))
-                File.Delete(LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll"));
+            if (File.Exists(CaptureDesktopPath))
+                File.Delete(CaptureDesktopPath);
+            if (File.Exists(WxbPluginGUIExePath))
+                File.Delete(WxbPluginGUIExePath);
+            if (File.Exists(WxbPluginGUIDllPath))
+                File.Delete(WxbPluginGUIDllPath);
 
             try
             {
                 byte[] data = Properties.Resources.CaptureDesktop;
-                Stream stream = File.Create(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll"));
+                Stream stream = File.Create(CaptureDesktopPath);
                 stream.Write(data, 0, data.Length);
                 stream.Close();
 
                 data = Properties.Resources.WxbPluginGUI;
-                stream = File.Create(LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe"));
+                stream = File.Create(WxbPluginGUIExePath);
                 stream.Write(data, 0, data.Length);
                 stream.Close();
             }
@@ -328,27 +321,28 @@ namespace Vizpower_Plugin_Installer_WPF
                 return;
             }
 
-            bool isclear = true;
+            //杀死进程
+            if (!KillWxbProcess())
+                return;
 
-            if (File.Exists(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll")))
+            bool isclear = true;
+            if (File.Exists(CaptureDesktopPath))
             {
-                File.Delete(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll"));
+                File.Delete(CaptureDesktopPath);
 
                 byte[] data = Properties.Resources.OriginalCaptureDesktop;
-                Stream stream = File.Create(LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll"));
+                Stream stream = File.Create(CaptureDesktopPath);
                 stream.Write(data, 0, data.Length);
                 stream.Close();
-
+            }
+            if (File.Exists(WxbPluginGUIExePath))
+            {
+                File.Delete(WxbPluginGUIExePath);
                 isclear = false;
             }
-            if (File.Exists(LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe")))
+            if (File.Exists(WxbPluginGUIDllPath))
             {
-                File.Delete(LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe"));
-                isclear = false;
-            }
-            if (File.Exists(LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll")))
-            {
-                File.Delete(LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll"));
+                File.Delete(WxbPluginGUIDllPath);
                 isclear = false;
             }
 
@@ -358,6 +352,30 @@ namespace Vizpower_Plugin_Installer_WPF
                 MessageBox.Show("卸载成功！", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             InstallButton.Content = "安装";
+        }
+        private bool KillWxbProcess()
+        {
+            if (MessageBox.Show("需要关闭无限宝相关进程，如有残留进程，安装器会关闭它，是否继续？", Title, MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
+                return false;
+
+            foreach (Process process in Process.GetProcesses())
+            {
+                if (process.ProcessName == "iMeeting" || process.ProcessName == "LoginTool" || process.ProcessName == "WxbPluginGUI")
+                {
+                    try
+                    {
+                        process.Kill();
+                        process.WaitForExit();
+                    }
+                    catch
+                    {
+                        MessageBox.Show("关闭无限宝进程时出现错误，请尝试手动关闭无限宝");
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         //关于
