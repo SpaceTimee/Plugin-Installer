@@ -23,7 +23,7 @@ namespace Vizpower_Plugin_Installer_WPF
     public partial class MainWindow : Window
     {
         //说明:
-        //更改版本号到Assembly Information改，特殊版本更改字符串SpecialVersion，如测试版可改为“Alpha”,“Beta”
+        //更改版本号到Properties/AssemblyInfo.cs改，特殊版本更改字符串SpecialVersion，如测试版可改为“Alpha”,“Beta”
         //请使用三位版本号，每位使用一位数
         //如有需要，可修改下方字段
         //CaptureDesktop.dll和WxbPluginGUI.exe在Resources文件夹，替换掉原来的再编译即可
@@ -31,6 +31,8 @@ namespace Vizpower_Plugin_Installer_WPF
 
         private const string SpecialVersion = "Beta";    //特殊版本后缀
         private const bool SkipUpdate = false;  //是否跳过开启时的检查更新
+        private const bool KillWxbBeforeInstall = true; //安装前是否自动杀死无限宝相关进程
+        private const bool KillWxbBeforeUninstall = true;   //拆卸前是否自动杀死无限宝相关进程
         private const string AgreementUrl = @"https://yuhuison-1259460701.cos.ap-chengdu.myqcloud.com/mzsm.html";   //用户协议Url
         private const string InstallTipUrl = @"https://gitee.com/klxn/wxbplugin/raw/master/install.png";    //安装提示Url
         private const string InstallVideoUrl = @"https://www.bilibili.com/video/BV1Ca4y1E7mx";  //使用教程Url
@@ -58,8 +60,11 @@ namespace Vizpower_Plugin_Installer_WPF
             Title = "无限宝第三方插件 Ver " + CurrentVersion.Major + "." + CurrentVersion.Minor + "." + CurrentVersion.Build + " " + SpecialVersion + " 安装器";
 
             //恢复安装路径
-            LocationTextBox.Text = Properties.Settings.Default.FilePath;
-            FileName = Properties.Settings.Default.FileName;
+            if (File.Exists(Properties.Settings.Default.FilePath))
+            {
+                LocationTextBox.Text = Properties.Settings.Default.FilePath;
+                FileName = Properties.Settings.Default.FileName;
+            }
 
             //处理恢复记录
             if (LocationTextBox.Text != "" && FileName != "")
@@ -281,7 +286,7 @@ namespace Vizpower_Plugin_Installer_WPF
             }
 
             //杀死进程
-            if (!KillWxbProcess())
+            if (KillWxbBeforeInstall && !KillWxbProcess())
                 return;
 
             if (File.Exists(CaptureDesktopPath))
@@ -322,7 +327,7 @@ namespace Vizpower_Plugin_Installer_WPF
             }
 
             //杀死进程
-            if (!KillWxbProcess())
+            if (KillWxbBeforeUninstall && !KillWxbProcess())
                 return;
 
             bool isclear = true;
