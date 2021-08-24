@@ -1,7 +1,5 @@
 ﻿namespace Vizpower_Plugin_Installer_WPF.Properties
 {
-
-
     // 通过此类可以处理设置类的特定事件: 
     //  在更改某个设置的值之前将引发 SettingChanging 事件。
     //  在更改某个设置的值之后将引发 PropertyChanged 事件。
