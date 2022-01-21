@@ -125,9 +125,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\CaptureDesktop.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -143,8 +140,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\OriginalCaptureDesktop.dll" />
-    <Content Include="Resources\WxbPluginGUI.exe" />
+    <None Include="Resources\WxbPluginGUI.exe" />
+    <None Include="Resources\CaptureDesktop.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\OriginalCaptureDesktop.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

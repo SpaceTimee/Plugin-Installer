@@ -29,7 +29,7 @@ namespace Vizpower_Plugin_Installer_WPF
         //CaptureDesktop.dll和WxbPluginGUI.exe在Resources文件夹，替换掉原来的再编译即可
         //OriginalCaptureDesktop.dll是原版无限宝CaptureDesktop.dll，用于在拆卸时还原，如文件有更新，可将文件名改为OriginalCaptureDesktop.dll并替换
 
-        private const string SpecialVersion = "Beta";    //特殊版本后缀
+        private const string SpecialVersion = "";    //特殊版本后缀
         private const bool SkipUpdate = false;  //是否跳过开启时的检查更新
         private const bool KillWxbBeforeInstall = true; //安装前是否自动杀死无限宝相关进程
         private const bool KillWxbBeforeUninstall = true;   //拆卸前是否自动杀死无限宝相关进程
@@ -45,8 +45,6 @@ namespace Vizpower_Plugin_Installer_WPF
         private static string CaptureDesktopPath = "";
         private static string WxbPluginGUIExePath = "";
         private static string WxbPluginGUIDllPath = "";
-        private static string OriginInstallButtonContent = "安装";  //原始安装按钮的Content
-        private static int WrongNum = 0;   //呵呵次数
 
         public MainWindow()
         {
@@ -86,7 +84,10 @@ namespace Vizpower_Plugin_Installer_WPF
 
                 if (Strings.Split(WebText, "<版本>").ToList().Count < 3)
                 {
-                    MessageBox.Show("检查更新失败，请检查网络连接", Title);
+                    Dispatcher.Invoke(new Action(() =>
+                    {
+                        MessageBox.Show("检查更新失败，请检查网络连接", Title);
+                    }));
                     return;
                 }
 
@@ -103,7 +104,10 @@ namespace Vizpower_Plugin_Installer_WPF
                 }
                 catch
                 {
-                    MessageBox.Show("处理联网信息时发生错误，请向开发者反馈", Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Dispatcher.Invoke(new Action(() =>
+                    {
+                        MessageBox.Show("处理联网信息时发生错误，请向开发者反馈", Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }));
                     return;
                 }
                 if (LatestVersionCode > CurrentVersionCode)
@@ -114,13 +118,20 @@ namespace Vizpower_Plugin_Installer_WPF
                     if (ForceUpdate == "0")
                     {
                         //非强制更新
-                        if (MessageBox.Show("插件已更新，最新版本：" + LatestVersion + "\n是否跳转下载更新？", Title, MessageBoxButtons.YesNo, MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
-                            Process.Start(DownLoadURL);
+                        Dispatcher.Invoke(new Action(() =>
+                        {
+                            if (MessageBox.Show("插件已有更新，最新版本：" + LatestVersion + "\n是否跳转下载更新？", Title, MessageBoxButtons.YesNo, MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
+                                Process.Start(DownLoadURL);
+                        }));
                     }
                     else
                     {
                         //强制更新
-                        MessageBox.Show("插件有重要更新，最新版本：" + LatestVersion + "\n即将跳转下载更新", Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Dispatcher.Invoke(new Action(() =>
+                        {
+                            MessageBox.Show("本版本已停用，最新版本：" + LatestVersion + "\n即将跳转下载更新", Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }));
+
                         Process.Start(DownLoadURL);
 
                         Environment.Exit(0);
@@ -129,7 +140,10 @@ namespace Vizpower_Plugin_Installer_WPF
             }
             catch
             {
-                MessageBox.Show("处理联网信息时发生错误，请向开发者反馈", Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Dispatcher.Invoke(new Action(() =>
+                {
+                    MessageBox.Show("处理联网信息时发生错误，请向开发者反馈", Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }));
                 return;
             }
         }
@@ -255,30 +269,6 @@ namespace Vizpower_Plugin_Installer_WPF
         }
         private void InstallButton_Click(object sender, EventArgs e)
         {
-            if (AgreementCheckBox.IsChecked == false)
-            {
-                if (WrongNum == 1)
-                    MessageBox.Show("???", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                else if (WrongNum < 3)
-                    MessageBox.Show("你呵呵什么?", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                else if (WrongNum < 5)
-                    MessageBox.Show("去想想有没有漏掉什么?", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                else if (WrongNum < 10)
-                    MessageBox.Show("呵呵", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                else if (WrongNum == 10)
-                    MessageBox.Show("我佛了，同意个用户协议有这么难么", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                else if (WrongNum == 100)
-                    MessageBox.Show("是的，你已经呵呵了100次了", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                else if (WrongNum == 1000)
-                    MessageBox.Show("大佬，你的坚持和毅力已经击败了99.99%的人", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                else if (WrongNum == 1001)
-                    MessageBox.Show("但用户协议是不能跳过的", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                else
-                    MessageBox.Show("同意一下用户协议吧QAQ", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                ++WrongNum;
-                return;
-            }
             if (LocationTextBox.Text == "" || FileName == "")
             {
                 MessageBox.Show("请点击浏览找到 LoginTool.exe 文件", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -390,12 +380,10 @@ namespace Vizpower_Plugin_Installer_WPF
             (
 @"欢迎使用无限宝第三方插件安装器
 
-安装器开发者: WXRIW，Space Time 
-插件开发者: 秋小十，快乐小牛，极地萤火
-
-(开发者名单如有缺失请找Space Time加上)
-
 反馈请加QQ群: 904645614
+
+安装器开发者: 快乐小牛，WXRIW，Space Time 
+插件开发者: 秋小十，快乐小牛，凌莞，极地萤火
 
 使用前须知:
 1. 本程序免费开源，任何人不得将本程序用于商业和违法用途
@@ -406,18 +394,13 @@ namespace Vizpower_Plugin_Installer_WPF
         }
 
         //同意协议相关处理
-        private void InstallButton_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        private void AgreementCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            if (AgreementCheckBox.IsChecked == false)
-            {
-                OriginInstallButtonContent = InstallButton.Content as string;
-                InstallButton.Content = "呵呵";
-            }
+            InstallButton.IsEnabled = true;
         }
-        private void InstallButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        private void AgreementCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            if (AgreementCheckBox.IsChecked == false)
-                InstallButton.Content = OriginInstallButtonContent;
+            InstallButton.IsEnabled = false;
         }
 
         //链接相关处理
