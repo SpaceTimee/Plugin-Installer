@@ -382,8 +382,9 @@ namespace Vizpower_Plugin_Installer_WPF
 
 反馈请加QQ群: 904645614
 
-安装器开发者: 快乐小牛，WXRIW，Space Time 
-插件开发者: 秋小十，快乐小牛，凌莞，极地萤火
+插件/安装器开发者:
+秋小十，快乐小牛，极地萤火，
+阳莱，凌莞，WXRIW，Space Time
 
 使用前须知:
 1. 本程序免费开源，任何人不得将本程序用于商业和违法用途

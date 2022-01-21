@@ -15,4 +15,4 @@ Github: [https://github.com/SpaceTimee/Vizpower-Plugin-Installer/releases](https
 
 ## 开发者:
 
-**WXRIW, Space Time**
+**快乐小牛, WXRIW, Space Time**
