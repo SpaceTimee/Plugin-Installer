@@ -28,11 +28,11 @@
         <Button x:Name="NavigateButton" Content="浏览" Click="NavigateButton_Click" Background="#FFEEEEEE" Grid.Column="3" Margin="5,0,10,0" Grid.Row="3" Height="33"/>
         <Label x:Name="TipLabel" Cursor="Hand" MouseDown="TipLabel_MouseDown" Content="使用说明 (旧版)" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="Blue" Grid.ColumnSpan="2" Grid.Row="4"/>
         <Label x:Name="AgreementLabel" Cursor="Hand" MouseDown="AgreementLabel_MouseDown"  Content="用户协议和免责声明" HorizontalAlignment="Right" Foreground="Blue" Grid.Column="2" Grid.ColumnSpan="2" Margin="0,0,10,0" Grid.Row="4"/>
-        <CheckBox x:Name="AgreementCheckBox" Content="已阅读并同意" HorizontalAlignment="Right" Margin="0,0,140,0" Height="29" Width="107" VerticalContentAlignment="Center" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="4"/>
+        <CheckBox x:Name="AgreementCheckBox" Content="已阅读并同意" HorizontalAlignment="Right" Margin="0,0,140,0" Height="29" Width="107" VerticalContentAlignment="Center" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="4" Checked="AgreementCheckBox_Checked" Unchecked="AgreementCheckBox_Unchecked"/>
         <Label x:Name="VideoLabel" Cursor="Hand" MouseDown="VideoLabel_MouseDown" Content="视频教程" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="Blue" Grid.Column="1" Grid.Row="4"/>
         <Button x:Name="UninstallButton" Content="卸载" Click="UninstallButton_Click" Margin="5,0,10,10" Background="#FFEEEEEE" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="5"/>
-        <Grid Grid.Row="5" Grid.ColumnSpan="2" MouseEnter="InstallButton_MouseEnter" MouseLeave="InstallButton_MouseLeave">
-            <Button x:Name="InstallButton" Content="安装" Click="InstallButton_Click" Margin="10,0,5,10" IsDefault="True" Background="#FFEEEEEE" Grid.ColumnSpan="2" Grid.Row="5"/>
+        <Grid Grid.Row="5" Grid.ColumnSpan="2">
+            <Button x:Name="InstallButton" Content="安装" Click="InstallButton_Click" Margin="10,0,5,10" IsDefault="True" Background="#FFEEEEEE" Grid.ColumnSpan="2" Grid.Row="5" IsEnabled="False"/>
         </Grid>
         <Button x:Name="AboutButton" Content="关于" Click="AboutButton_Click" Height="33" VerticalAlignment="Bottom" Background="#FFEEEEEE" Grid.Column="3" Margin="5,0,10,10" Grid.Row="1" Grid.RowSpan="2"/>
     </Grid>
