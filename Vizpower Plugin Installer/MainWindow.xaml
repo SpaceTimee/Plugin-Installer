@@ -4,36 +4,40 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         WindowStartupLocation="CenterScreen"
-        mc:Ignorable="d" FontFamily="Segoe UI, Microsoft YaHei UI" FontSize="14"
+        mc:Ignorable="d"
+        Background="{StaticResource MaterialDesignBackground}"
+        FontFamily="Segoe UI, Microsoft YaHei UI" FontSize="14"
         Title="无限宝第三方插件安装器" Height="245" Width="450" ResizeMode="CanMinimize">
-    <Grid x:Name="grid">
+    <Grid x:Name="grid" Margin="10,0,10,10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="46"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="33"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="1.5*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Label x:Name="SloganLabel" Content="为了阻挡无限宝的打击，本程序诞生了！" Margin="10,0" Height="30" Foreground="Red" Grid.ColumnSpan="4"/>
-        <Label x:Name="CloseSecurityTipLabel" Content="本程序释放的文件可能会引起部分杀毒软件的误报，如果出现误报，&#xD;&#xA;请关闭杀毒软件" Margin="10,0" Height="46" Foreground="Red" Grid.ColumnSpan="4" Grid.Row="1"/>
-        <Label x:Name="LocationTipLabel" Content="LoginTool.exe 位置 (位于无限宝安装目录)：" HorizontalAlignment="Left" Margin="10,0,0,0" Grid.ColumnSpan="3" Grid.Row="2"/>
-        <TextBox x:Name="LocationTextBox" Height="33" TextWrapping="Wrap" Text="" Margin="10,0,5,0" VerticalContentAlignment="Center" IsReadOnly="True" Grid.ColumnSpan="3" Grid.Row="3" Padding="5,0,0,0"/>
-        <Button x:Name="NavigateButton" Content="浏览" Click="NavigateButton_Click" Background="#FFEEEEEE" Grid.Column="3" Margin="5,0,10,0" Grid.Row="3" Height="33"/>
-        <Label x:Name="TipLabel" Cursor="Hand" MouseDown="TipLabel_MouseDown" Content="使用说明 (旧版)" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="Blue" Grid.ColumnSpan="2" Grid.Row="4"/>
-        <Label x:Name="AgreementLabel" Cursor="Hand" MouseDown="AgreementLabel_MouseDown"  Content="用户协议和免责声明" HorizontalAlignment="Right" Foreground="Blue" Grid.Column="2" Grid.ColumnSpan="2" Margin="0,0,10,0" Grid.Row="4"/>
-        <CheckBox x:Name="AgreementCheckBox" Content="已阅读并同意" HorizontalAlignment="Right" Margin="0,0,140,0" Height="29" Width="107" VerticalContentAlignment="Center" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="4" Checked="AgreementCheckBox_Checked" Unchecked="AgreementCheckBox_Unchecked"/>
-        <Label x:Name="VideoLabel" Cursor="Hand" MouseDown="VideoLabel_MouseDown" Content="视频教程" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="Blue" Grid.Column="1" Grid.Row="4"/>
-        <Button x:Name="UninstallButton" Content="卸载" Click="UninstallButton_Click" Margin="5,0,10,10" Background="#FFEEEEEE" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="5"/>
-        <Grid Grid.Row="5" Grid.ColumnSpan="2">
-            <Button x:Name="InstallButton" Content="安装" Click="InstallButton_Click" Margin="10,0,5,10" IsDefault="True" Background="#FFEEEEEE" Grid.ColumnSpan="2" Grid.Row="5" IsEnabled="False"/>
-        </Grid>
-        <Button x:Name="AboutButton" Content="关于" Click="AboutButton_Click" Height="33" VerticalAlignment="Bottom" Background="#FFEEEEEE" Grid.Column="3" Margin="5,0,10,10" Grid.Row="1" Grid.RowSpan="2"/>
+        <Label x:Name="SloganLabel" Content="为了阻挡无限宝的打击，本程序诞生了！" Foreground="Red" Grid.ColumnSpan="4" VerticalAlignment="Center" />
+        <Label x:Name="CloseSecurityTipLabel" Content="本程序释放的文件可能会引起部分杀毒软件的误报，如果出现误报，&#xD;&#xA;请关闭杀毒软件" Foreground="Red" Grid.ColumnSpan="4" Grid.Row="1" VerticalAlignment="Center" />
+        <Label x:Name="LocationTipLabel" Content="LoginTool.exe 位置 (位于无限宝安装目录)：" Grid.ColumnSpan="3" Grid.Row="2" VerticalAlignment="Center" />
+        <Button x:Name="AboutButton" Content="关于" Click="AboutButton_Click" VerticalAlignment="Bottom" Grid.Column="3" Margin="0,0,0,10" Grid.Row="1" Grid.RowSpan="2" />
+        <TextBox x:Name="LocationTextBox" TextWrapping="Wrap" Margin="0,0,10,0" VerticalContentAlignment="Center" IsReadOnly="True" Grid.ColumnSpan="3" Grid.Row="3" />
+        <Button x:Name="NavigateButton" Content="浏览" Click="NavigateButton_Click" Grid.Column="3" Grid.Row="3" VerticalAlignment="Bottom" />
+
+        <Label x:Name="TipLabel" Grid.Row="4" MouseDown="TipLabel_MouseDown" Content="使用说明 (旧版)" HorizontalAlignment="Left" Foreground="Blue" Grid.Column="0" VerticalAlignment="Center" />
+        <Label x:Name="VideoLabel" Grid.Row="4" MouseDown="VideoLabel_MouseDown" Content="视频教程" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="Blue" Grid.Column="1" VerticalAlignment="Center" />
+        <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="4" HorizontalAlignment="Right">
+            <CheckBox x:Name="AgreementCheckBox" Content="已阅读并同意 " HorizontalAlignment="Right" Checked="AgreementCheckBox_Checked" Unchecked="AgreementCheckBox_Unchecked" VerticalAlignment="Center" />
+            <Label x:Name="AgreementLabel" MouseDown="AgreementLabel_MouseDown" Content="用户协议和免责声明" Foreground="Blue" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <Button x:Name="UninstallButton" Content="卸载" Click="UninstallButton_Click" Margin="10,0,0,0" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="5" />
+        <Button x:Name="InstallButton" Content="安装" Click="InstallButton_Click" IsDefault="True" Grid.ColumnSpan="2" Grid.Row="5" IsEnabled="False" />
     </Grid>
 </Window>
