@@ -17,9 +17,6 @@ using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 
 namespace Vizpower_Plugin_Installer_WPF
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         //说明:
@@ -37,7 +34,7 @@ namespace Vizpower_Plugin_Installer_WPF
         private const string InstallTipUrl = @"https://gitee.com/klxn/wxbplugin/raw/master/install.png";    //安装提示Url
         private const string InstallVideoUrl = @"https://www.bilibili.com/video/BV1Ca4y1E7mx";  //使用教程Url
 
-        //注意:打包无需修改下方内容
+        //注意:打包请勿修改下方内容
         private static readonly Version CurrentVersion = Assembly.GetExecutingAssembly().GetName().Version; //当前版本
         private static readonly int CurrentVersionCode = int.Parse(CurrentVersion.Major.ToString() + CurrentVersion.Minor.ToString() + CurrentVersion.Build.ToString());  //当前版本号
 
@@ -46,7 +43,7 @@ namespace Vizpower_Plugin_Installer_WPF
         private static string WxbPluginGUIExePath = "";
         private static string WxbPluginGUIDllPath = "";
 
-        public MainWindow()
+        public MainWindow(string[] args)
         {
             InitializeComponent();
 
@@ -55,26 +52,13 @@ namespace Vizpower_Plugin_Installer_WPF
                 Task.Run(CheckUpdateOnline);
 
             //修改全局标题
-            Title = "无限宝第三方插件 Ver " + CurrentVersion.Major + "." + CurrentVersion.Minor + "." + CurrentVersion.Build + " " + SpecialVersion + " 安装器";
+            Title = "无限宝第三方插件 " + CurrentVersion.Major + "." + CurrentVersion.Minor + "." + CurrentVersion.Build + " " + SpecialVersion + (string.IsNullOrEmpty(SpecialVersion) ? "安装器" : " 安装器");
 
-            //恢复安装路径
-            if (File.Exists(Properties.Settings.Default.FilePath))
-            {
-                LocationTextBox.Text = Properties.Settings.Default.FilePath;
-                FileName = Properties.Settings.Default.FileName;
-            }
-
-            //处理恢复记录
-            if (LocationTextBox.Text != "" && FileName != "")
-            {
-                CaptureDesktopPath = LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll");
-                WxbPluginGUIExePath = LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe");
-                WxbPluginGUIDllPath = LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll");
-
-                if (File.Exists(CaptureDesktopPath) &&
-                    File.Exists(WxbPluginGUIExePath))
-                    InstallButton.Content = "更新";
-            }
+            //填充安装路径
+            if (args.Length >= 1 && File.Exists(args[0]) && Path.GetFileName(args[0]).StartsWith("LoginTool") && Path.GetFileName(args[0]).EndsWith(".exe"))
+                DealWithPath(args[0]);
+            else if (File.Exists(Properties.Settings.Default.FilePath))
+                DealWithPath(Properties.Settings.Default.FilePath);
         }
         private void CheckUpdateOnline()
         {
@@ -150,7 +134,7 @@ namespace Vizpower_Plugin_Installer_WPF
         private string GetWebCode(string strURL)
         {
             Uri arg_15_0 = new Uri(strURL);
-            byte[] i = new byte[1];
+            byte[] i;
             Queue<byte> dataQue = new Queue<byte>();
             HttpWebRequest httpReq = (HttpWebRequest)WebRequest.Create(arg_15_0);
             DateTime sTime = Conversions.ToDate("1990-09-21 00:00:00");
@@ -243,33 +227,35 @@ namespace Vizpower_Plugin_Installer_WPF
             }
         }
 
-        //安装拆卸核心功能
+        //安装路径
         private void NavigateButton_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "无限宝登陆工具|LoginTool*.exe";
+            OpenFileDialog openFileDialog = new OpenFileDialog { Filter = "无限宝登陆工具|LoginTool*.exe" };
 
             if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                LocationTextBox.Text = openFileDialog.FileName; //路径
-                FileName = System.IO.Path.GetFileName(LocationTextBox.Text);    //文件名(包括后缀名)
-
-                CaptureDesktopPath = LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll");
-                WxbPluginGUIExePath = LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe");
-                WxbPluginGUIDllPath = LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll");
-
-                Properties.Settings.Default.FileName = FileName;
-                Properties.Settings.Default.FilePath = LocationTextBox.Text;
-                Properties.Settings.Default.Save();
-
-                if (File.Exists(CaptureDesktopPath) &&
-                    File.Exists(WxbPluginGUIExePath))
-                    InstallButton.Content = "更新";
-            }
+                DealWithPath(openFileDialog.FileName);
         }
+        private void DealWithPath(string filePath)
+        {
+            LocationTextBox.Text = filePath;    //路径
+            FileName = Path.GetFileName(filePath);    //文件名(包括后缀名)
+
+            CaptureDesktopPath = LocationTextBox.Text.Replace(FileName, "CaptureDesktop.dll");
+            WxbPluginGUIExePath = LocationTextBox.Text.Replace(FileName, "WxbPluginGUI.exe");
+            WxbPluginGUIDllPath = LocationTextBox.Text.Replace(FileName, "wxbPluginGUI.dll");
+
+            Properties.Settings.Default.FilePath = LocationTextBox.Text;
+            Properties.Settings.Default.Save();
+
+            if (File.Exists(CaptureDesktopPath) &&
+                File.Exists(WxbPluginGUIExePath))
+                InstallButton.Content = "更新";
+        }
+
+        //安装拆卸
         private void InstallButton_Click(object sender, EventArgs e)
         {
-            if (LocationTextBox.Text == "" || FileName == "")
+            if (string.IsNullOrEmpty(LocationTextBox.Text) || string.IsNullOrEmpty(FileName))
             {
                 MessageBox.Show("请点击浏览找到 LoginTool.exe 文件", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
@@ -310,7 +296,7 @@ namespace Vizpower_Plugin_Installer_WPF
         }
         private void UninstallButton_Click(object sender, RoutedEventArgs e)
         {
-            if (LocationTextBox.Text == "" || FileName == "")
+            if (string.IsNullOrEmpty(LocationTextBox.Text) || string.IsNullOrEmpty(FileName))
             {
                 MessageBox.Show("请点击浏览找到 LoginTool.exe 文件", Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
@@ -350,13 +336,13 @@ namespace Vizpower_Plugin_Installer_WPF
         }
         private bool KillWxbProcess()
         {
-            if (MessageBox.Show("需要关闭无限宝相关进程，如有残留进程，安装器会关闭它，是否继续？", Title, MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
-                return false;
-
             foreach (Process process in Process.GetProcesses())
             {
                 if (process.ProcessName == "iMeeting" || process.ProcessName == "LoginTool" || process.ProcessName == "WxbPluginGUI")
                 {
+                    if (MessageBox.Show("发现无限宝相关进程残留，安装器会尝试自动关闭它，是否继续？", Title, MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
+                        return false;
+
                     try
                     {
                         process.Kill();
