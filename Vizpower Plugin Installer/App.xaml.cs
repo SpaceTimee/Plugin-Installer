@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Vizpower_Plugin_Installer_WPF
+namespace Vizpower_Plugin_Installer
 {
     public partial class App : Application
     {

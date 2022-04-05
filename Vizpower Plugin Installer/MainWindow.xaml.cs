@@ -15,7 +15,7 @@ using Microsoft.VisualBasic.CompilerServices;
 using MessageBox = System.Windows.Forms.MessageBox;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 
-namespace Vizpower_Plugin_Installer_WPF
+namespace Vizpower_Plugin_Installer
 {
     public partial class MainWindow : Window
     {

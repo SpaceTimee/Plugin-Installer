@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 
-namespace Vizpower_Plugin_Installer_WPF
+namespace Vizpower_Plugin_Installer
 {
     internal static class IconRemover
     {
