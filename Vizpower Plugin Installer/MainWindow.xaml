@@ -8,7 +8,7 @@
         Background="{StaticResource MaterialDesignBackground}"
         FontFamily="Segoe UI, Microsoft YaHei UI" FontSize="14"
         Title="无限宝第三方插件安装器" Height="245" Width="450" ResizeMode="CanMinimize">
-    <Grid x:Name="grid" Margin="10,0,10,10">
+    <Grid Margin="10,0,10,10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
@@ -23,9 +23,9 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Label x:Name="SloganLabel" Content="为了阻挡无限宝的打击，本程序诞生了！" Foreground="Red" Grid.ColumnSpan="4" VerticalAlignment="Center" />
-        <Label x:Name="CloseDefenderTipLabel" Content="本程序释放的文件可能会引起部分杀毒软件的误报，如果出现误报，&#xD;&#xA;请关闭杀毒软件" Foreground="Red" Grid.ColumnSpan="4" Grid.Row="1" VerticalAlignment="Center" />
-        <Label x:Name="PathTipLabel" Content="LoginTool.exe 位置 (位于无限宝安装目录)：" Grid.ColumnSpan="3" Grid.Row="2" VerticalAlignment="Center" />
+        <Label Content="为了阻挡无限宝的打击，本程序诞生了！" Foreground="Red" Grid.ColumnSpan="4" VerticalAlignment="Center" />
+        <Label Content="本程序释放的文件可能会引起部分杀毒软件的误报，如果出现误报，&#xD;&#xA;请关闭杀毒软件" Foreground="Red" Grid.ColumnSpan="4" Grid.Row="1" VerticalAlignment="Center" />
+        <Label Content="LoginTool.exe 位置 (位于无限宝安装目录)：" Grid.ColumnSpan="3" Grid.Row="2" VerticalAlignment="Center" />
         <Button x:Name="AboutButton" Content="关于" Click="AboutButton_Click" VerticalAlignment="Bottom" Grid.Column="3" Margin="0,0,0,10" Grid.Row="1" Grid.RowSpan="2" />
         <TextBox x:Name="PathTextBox" Margin="0,0,10,0" VerticalContentAlignment="Center" Grid.ColumnSpan="3" Grid.Row="3" TextChanged="PathTextBox_TextChanged" />
         <Button x:Name="NavigateButton" Content="浏览" Click="NavigateButton_Click" Grid.Column="3" Grid.Row="3" VerticalAlignment="Bottom" />
