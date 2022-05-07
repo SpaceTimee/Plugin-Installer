@@ -10,12 +10,14 @@
 Github: [https://github.com/SpaceTimee/Vizpower-Plugin-Installer/releases](https://github.com/SpaceTimee/Vizpower-Plugin-Installer/releases)
 
 ## 反馈群号
-❤: 904645614</br>
-💛: 909457621</br>
-💙: 705468445
+* ❤: 904645614
+* 💛: 909457621
+* 💙: 705468445
 
 ## 联系邮箱
 **Zeus6_6@163.com**
 
 ## 开发者
-**快乐小牛, WXRIW, Space Time**
+**WXRIW, Space Time**
+
+•ᴗ•

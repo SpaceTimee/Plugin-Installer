@@ -129,7 +129,7 @@ namespace Vizpower_Plugin_Installer
         //浏览路径
         private void NavigateButton_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog { Filter = "无限宝登陆工具|LoginTool*.exe" };
+            OpenFileDialog openFileDialog = new OpenFileDialog { Filter = "无限宝登陆工具|LoginTool*.exe", RestoreDirectory = true };
 
             if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 PathTextBox.Text = openFileDialog.FileName;
@@ -219,13 +219,13 @@ namespace Vizpower_Plugin_Installer
         }
         private bool KillWxbProcess()
         {
+            if (MessageBox.Show("安装前安装器会尝试自动关闭无限宝相关进程，是否继续？", Title, MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
+                return false;
+
             foreach (Process process in Process.GetProcesses())
             {
                 if (process.ProcessName == "iMeeting" || process.ProcessName == "LoginTool" || process.ProcessName == "WxbPluginGUI")
                 {
-                    if (MessageBox.Show("发现无限宝相关进程残留，安装器会尝试自动关闭它，是否继续？", Title, MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
-                        return false;
-
                     try
                     {
                         process.Kill();
