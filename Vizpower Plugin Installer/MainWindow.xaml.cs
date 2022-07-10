@@ -59,7 +59,7 @@ namespace Vizpower_Plugin_Installer
             try
             {
                 string currentVersionCode = CurrentVersion.Major.ToString() + CurrentVersion.Minor.ToString() + CurrentVersion.Build.ToString();  //当前版本号
-                string httpResponseStr = await new HttpClient().GetStringAsync("https://gitee.com/klxn/wxbplugin/raw/master/service.txt");
+                string httpResponseStr = await new HttpClient().GetStringAsync("https://klxn0-0.coding.net/p/wxbplugin/d/wxb/git/raw/master/service");
                 string latestVersion = Strings.Split(httpResponseStr, "<版本>")[1];
                 string latestVersionCode = "";
                 for (int i = 1; i <= latestVersion.Length; ++i)
