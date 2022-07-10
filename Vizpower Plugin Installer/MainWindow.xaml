@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Background="{StaticResource MaterialDesignBackground}"
         FontFamily="Segoe UI, Microsoft YaHei UI" FontSize="14"
-        Title="无限宝第三方插件安装器" Height="245" Width="450" ResizeMode="CanMinimize">
+        Title="无限宝第三方插件安装器" Height="245" Width="450" ResizeMode="CanMinimize" KeyDown="MainWin_KeyDown">
     <Grid Margin="10,0,10,10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />

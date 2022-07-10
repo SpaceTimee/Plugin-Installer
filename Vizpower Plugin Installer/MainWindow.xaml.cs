@@ -95,7 +95,7 @@ namespace Vizpower_Plugin_Installer
             }
             catch
             {
-                Dispatcher.Invoke(() => { MessageBox.Show("检查更新时发生错误，请检查网络连接", Title, MessageBoxButtons.OK, MessageBoxIcon.Error); });
+                Dispatcher.Invoke(() => { MessageBox.Show("检查更新失败", Title, MessageBoxButtons.OK, MessageBoxIcon.Error); });
                 return;
             }
         }
@@ -249,9 +249,9 @@ namespace Vizpower_Plugin_Installer
             (
 @"欢迎使用无限宝第三方插件安装器
 
-反馈请加QQ群: 904645614
+反馈请加 QQ 群: 904645614
 
-插件/安装器开发者:
+插件 / 安装器开发者:
 秋小十，快乐小牛，极地萤火，
 阳莱，凌莞，WXRIW，Space Time
 
@@ -285,6 +285,13 @@ namespace Vizpower_Plugin_Installer
         private void VideoLabel_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Process.Start(InstallVideoUrl);
+        }
+
+        //窗口强关热键
+        private void MainWin_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.W)
+                Environment.Exit(0);
         }
     }
 }
